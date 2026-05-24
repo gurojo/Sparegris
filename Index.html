@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sparegris">
+<title>Min Sparegris 🐷</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF6B9D;
+    --yellow: #FFD93D;
+    --green: #6BCB77;
+    --blue: #4D96FF;
+    --purple: #C77DFF;
+    --orange: #FF9A3C;
+    --bg: #FFF5F9;
+    --card: #FFFFFF;
+    --text: #2D1B69;
+    --muted: #9B8EC4;
+    --radius: 24px;
+    --shadow: 0 8px 32px rgba(45,27,105,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+    padding-bottom: 40px;
+  }
+
+  /* BG bubbles */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; right: -80px;
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, #FFD93D55 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; left: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, #FF6B9D44 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 18px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 36px 0 20px;
+  }
+  .header .pig {
+    font-size: 56px;
+    display: block;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 6px 12px rgba(255,107,157,0.3));
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--pink);
+    text-shadow: 3px 3px 0 #FFD93D;
+    margin-top: 6px;
+  }
+
+  /* SALDO CARD */
+  .saldo-card {
+    background: linear-gradient(135deg, #FF6B9D 0%, #C77DFF 100%);
+    border-radius: var(--radius);
+    padding: 28px 24px 24px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(255,107,157,0.35);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .saldo-card::before {
+    content: '✨';
+    position: absolute;
+    top: 12px; right: 18px;
+    font-size: 22px;
+    animation: spin 4s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.3); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  .saldo-label {
+    font-size: 14px;
+    font-weight: 700;
+    opacity: 0.85;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .saldo-amount {
+    font-family: 'Baloo 2', cursive;
+    font-size: 60px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  }
+  .saldo-kr { font-size: 32px; vertical-align: super; }
+
+  /* ACTION BUTTONS */
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .btn {
+    border: none;
+    border-radius: 20px;
+    padding: 18px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.12s, box-shadow 0.12s;
+    box-shadow: var(--shadow);
+    -webkit-user-select: none;
+  }
+  .btn:active { transform: scale(0.94); }
+  .btn-inn {
+    background: linear-gradient(135deg, #6BCB77, #4ECDC4);
+    color: white;
+    box-shadow: 0 8px 24px rgba(107,203,119,0.35);
+  }
+  .btn-ut {
+    background: linear-gradient(135deg, #FF9A3C, #FF6B9D);
+    color: white;
+    box-shadow: 0 8px 24px rgba(255,154,60,0.35);
+  }
+  .btn-icon { font-size: 28px; }
+  .btn-text { font-size: 15px; }
+
+  /* SPAREMÅL CARD */
+  .maal-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 2px solid #FFD93D44;
+  }
+  .maal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .maal-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .maal-emoji { font-size: 24px; }
+  .maal-name {
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .maal-edit-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 12px;
+    transition: background 0.15s;
+  }
+  .maal-edit-btn:hover { background: #f0eaff; }
+
+  .maal-amounts {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .maal-saved { color: var(--green); }
+  .maal-target { color: var(--muted); }
+
+  .progress-track {
+    background: #F0EBF8;
+    border-radius: 12px;
+    height: 18px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #FFD93D, #FF6B9D);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .progress-fill::after {
+    content: '⭐';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+  }
+
+  .maal-mangler {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+  }
+  .maal-empty {
+    text-align: center;
+    padding: 10px 0;
+  }
+  .maal-empty p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .btn-add-maal {
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255,154,60,0.3);
+    transition: transform 0.12s;
+  }
+  .btn-add-maal:active { transform: scale(0.95); }
+
+  /* HISTORY */
+  .history-section { margin-bottom: 20px; }
+  .section-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+  .history-item {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(45,27,105,0.07);
+    animation: slideIn 0.3s ease-out;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .history-left { display: flex; align-items: center; gap: 12px; }
+  .history-icon {
+    width: 40px; height: 40px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .icon-inn { background: #E8F8EA; }
+  .icon-ut { background: #FFF0E8; }
+  .history-desc { font-weight: 700; font-size: 15px; color: var(--text); }
+  .history-date { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .history-amount { font-family: 'Baloo 2', cursive; font-size: 20px; font-weight: 700; }
+  .amount-inn { color: var(--green); }
+  .amount-ut { color: var(--orange); }
+
+  .empty-history {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .empty-history .emoji { font-size: 36px; display: block; margin-bottom: 8px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,27,105,0.4);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 32px 32px 0 0;
+    padding: 28px 24px 48px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: #E0D7F0;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 26px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  .input-group { margin-bottom: 16px; }
+  .input-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .input-field {
+    width: 100%;
+    padding: 16px 18px;
+    border: 2px solid #E8E0F5;
+    border-radius: 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    background: #FAF7FF;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .input-field:focus { border-color: var(--purple); }
+
+  .maal-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .toggle-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #E8E0F5;
+    border-radius: 14px;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .toggle-btn.active {
+    border-color: var(--purple);
+    background: #F0E8FF;
+    color: var(--purple);
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.12s;
+    margin-top: 6px;
+  }
+  .btn-submit:active { transform: scale(0.97); }
+  .btn-inn-submit { background: linear-gradient(135deg, #6BCB77, #4ECDC4); box-shadow: 0 8px 24px rgba(107,203,119,0.3); }
+  .btn-ut-submit { background: linear-gradient(135deg, #FF9A3C, #FF6B9D); box-shadow: 0 8px 24px rgba(255,154,60,0.3); }
+  .btn-maal-submit { background: linear-gradient(135deg, var(--yellow), var(--orange)); box-shadow: 0 8px 24px rgba(255,154,60,0.3); }
+
+  .btn-cancel {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* CELEBRATION */
+  .celebration {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .celebration.active { display: flex; }
+  .celebration-content {
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: all;
+    background: white;
+    border-radius: 32px;
+    padding: 40px 48px;
+    box-shadow: 0 20px 60px rgba(45,27,105,0.2);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .celebration-emoji { font-size: 72px; display: block; margin-bottom: 12px; }
+  .celebration-text {
+    font-family: 'Baloo 2', cursive;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--pink);
+    margin-bottom: 8px;
+  }
+  .celebration-sub { font-size: 16px; color: var(--muted); font-weight: 700; }
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="pig">🐷</span>
+    <h1>Min Sparegris</h1>
+  </div>
+
+  <!-- SALDO -->
+  <div class="saldo-card">
+    <div class="saldo-label">💰 Jeg har</div>
+    <div class="saldo-amount" id="saldoDisplay">
+      <span class="saldo-kr">kr </span><span id="saldoTall">0</span>
+    </div>
+  </div>
+
+  <!-- KNAPPER -->
+  <div class="action-row">
+    <button class="btn btn-inn" onclick="openModal('inn')">
+      <span class="btn-icon">🤑</span>
+      <span class="btn-text">Jeg fikk penger!</span>
+    </button>
+    <button class="btn btn-ut" onclick="openModal('ut')">
+      <span class="btn-icon">🛍️</span>
+      <span class="btn-text">Jeg brukte penger</span>
+    </button>
+  </div>
+
+  <!-- SPAREMÅL -->
+  <div class="maal-card">
+    <div class="maal-header">
+      <div class="maal-title-row">
+        <span class="maal-emoji">🎯</span>
+        <span class="maal-name">Sparemål</span>
+      </div>
+      <button class="maal-edit-btn" onclick="openMaalModal()" id="maalEditBtn">✏️</button>
+    </div>
+    <div id="maalContent">
+      <div class="maal-empty">
+        <p>Du har ikke satt et sparemål ennå!</p>
+        <button class="btn-add-maal" onclick="openMaalModal()">⭐ Sett sparemål</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORIKK -->
+  <div class="history-section">
+    <div class="section-title">📋 Historikk</div>
+    <div class="history-list" id="historyList">
+      <div class="empty-history">
+        <span class="emoji">🐷</span>
+        Ingen transaksjoner ennå. Start med å legge inn penger!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: INN/UT -->
+<div class="modal-overlay" id="transModal" onclick="closeIfOutside(event, 'transModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">🤑 Jeg fikk penger!</div>
+
+    <div class="input-group">
+      <label class="input-label">Beløp (kr)</label>
+      <input class="input-field" id="belopInput" type="number" inputmode="numeric" placeholder="0" min="0">
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Hva var det?</label>
+      <input class="input-field" id="beskrivelseInput" type="text" placeholder="F.eks. lommepenger, kjøpte is..." maxlength="40">
+    </div>
+
+    <div id="maalToggleRow" style="display:none">
+      <label class="input-label">Spare til målet?</label>
+      <div class="maal-toggle">
+        <button class="toggle-btn active" id="toggleJa" onclick="setMaalToggle(true)">🎯 Ja, til sparemålet</button>
+        <button class="toggle-btn" id="toggleNei" onclick="setMaalToggle(false)">💸 Nei, til lommepenger</button>
+      </div>
+    </div>
+
+    <button class="btn-submit btn-inn-submit" id="submitBtn" onclick="submitTrans()">Legg til!</button>
+    <button class="btn-cancel" onclick="closeModal('transModal')">Avbryt</button>
+  </div>
+</div>
+
+<!-- MODAL: SPAREMÅL -->
+<div class="modal-overlay" id="maalModal" onclick="closeIfOutside(event, 'maalModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⭐ Sparemål</div>
+
+    <div class="input-group">
+      <label class="input-label">Hva sparer du til?</label>
+      <input class="input-field" id="maalNavnInput" type="text" placeholder="F.eks. Nintendo Switch..." maxlength="30">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Hvor mye koster det? (kr)</label>
+      <input class="input-field" id="maalBelopInput" type="number" inputmode="numeric" placeholder="0" min="0">
+    </div>
+
+    <button class="btn-submit btn-maal-submit" onclick="saveMaal()">Lagre mål!</button>
+    <button class="btn-cancel" onclick="closeModal('maalModal')" id="slettMaalBtn">Slett sparemål</button>
+  </div>
+</div>
+
+<!-- FEIRING -->
+<div class="celebration" id="celebration">
+  <div class="celebration-content" onclick="closeCelebration()">
+    <span class="celebration-emoji" id="celebEmoji">🎉</span>
+    <div class="celebration-text" id="celebText">Bra jobba!</div>
+    <div class="celebration-sub" id="celebSub">Trykk for å fortsette</div>
+  </div>
+</div>
+
+<script>
+  // STATE
+  let state = {
+    saldo: 0,
+    maalSpart: 0,
+    maal: null, // { navn, belop }
+    transaksjoner: []
+  };
+
+  let currentType = 'inn';
+  let sparTilMaal = true;
+
+  function loadState() {
+    const saved = localStorage.getItem('sparegris_v2');
+    if (saved) state = JSON.parse(saved);
+    render();
+  }
+
+  function saveState() {
+    localStorage.setItem('sparegris_v2', JSON.stringify(state));
+  }
+
+  // RENDER
+  function render() {
+    // Saldo
+    document.getElementById('saldoTall').textContent = state.saldo.toLocaleString('nb-NO');
+
+    // Sparemål
+    renderMaal();
+
+    // Historikk
+    renderHistory();
+  }
+
+  function renderMaal() {
+    const el = document.getElementById('maalContent');
+    if (!state.maal) {
+      el.innerHTML = `
+        <div class="maal-empty">
+          <p>Du har ikke satt et sparemål ennå!</p>
+          <button class="btn-add-maal" onclick="openMaalModal()">⭐ Sett sparemål</button>
+        </div>`;
+      return;
+    }
+    const pct = Math.min(100, Math.round((state.maalSpart / state.maal.belop) * 100));
+    const mangler = Math.max(0, state.maal.belop - state.maalSpart);
+    el.innerHTML = `
+      <div class="maal-amounts">
+        <span class="maal-saved">💚 Spart: kr ${state.maalSpart.toLocaleString('nb-NO')}</span>
+        <span class="maal-target">Mål: kr ${state.maal.belop.toLocaleString('nb-NO')}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="maal-mangler">${pct >= 100 ? '🎉 Du har nådd målet!' : `${mangler.toLocaleString('nb-NO')} kr igjen til ${state.maal.navn}!`}</div>
+    `;
+  }
+
+  function renderHistory() {
+    const el = document.getElementById('historyList');
+    if (!state.transaksjoner.length) {
+      el.innerHTML = `<div class="empty-history"><span class="emoji">🐷</span>Ingen transaksjoner ennå. Start med å legge inn penger!</div>`;
+      return;
+    }
+    el.innerHTML = [...state.transaksjoner].reverse().map(t => `
+      <div class="history-item">
+        <div class="history-left">
+          <div class="history-icon ${t.type === 'inn' ? 'icon-inn' : 'icon-ut'}">${t.type === 'inn' ? '🤑' : '🛍️'}</div>
+          <div>
+            <div class="history-desc">${t.beskrivelse}${t.tilMaal ? ' 🎯' : ''}</div>
+            <div class="history-date">${t.dato}</div>
+          </div>
+        </div>
+        <div class="history-amount ${t.type === 'inn' ? 'amount-inn' : 'amount-ut'}">
+          ${t.type === 'inn' ? '+' : '-'}${t.belop.toLocaleString('nb-NO')} kr
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // MODAL
+  function openModal(type) {
+    currentType = type;
+    sparTilMaal = true;
+    document.getElementById('belopInput').value = '';
+    document.getElementById('beskrivelseInput').value = '';
+
+    if (type === 'inn') {
+      document.getElementById('modalTitle').textContent = '🤑 Jeg fikk penger!';
+      document.getElementById('submitBtn').className = 'btn-submit btn-inn-submit';
+      document.getElementById('submitBtn').textContent = 'Legg til! 💚';
+      // Show maal toggle if maal exists
+      document.getElementById('maalToggleRow').style.display = state.maal ? 'block' : 'none';
+      setMaalToggle(true);
+    } else {
+      document.getElementById('modalTitle').textContent = '🛍️ Jeg brukte penger';
+      document.getElementById('submitBtn').className = 'btn-submit btn-ut-submit';
+      document.getElementById('submitBtn').textContent = 'Trekk fra! 🛍️';
+      document.getElementById('maalToggleRow').style.display = 'none';
+    }
+
+    document.getElementById('transModal').classList.add('active');
+    setTimeout(() => document.getElementById('belopInput').focus(), 300);
+  }
+
+  function setMaalToggle(val) {
+    sparTilMaal = val;
+    document.getElementById('toggleJa').classList.toggle('active', val);
+    document.getElementById('toggleNei').classList.toggle('active', !val);
+  }
+
+  function submitTrans() {
+    const belop = parseInt(document.getElementById('belopInput').value);
+    const beskrivelse = document.getElementById('beskrivelseInput').value.trim() || (currentType === 'inn' ? 'Penger inn' : 'Kjøpte noe');
+
+    if (!belop || belop <= 0) {
+      document.getElementById('belopInput').focus();
+      document.getElementById('belopInput').style.borderColor = 'var(--pink)';
+      setTimeout(() => document.getElementById('belopInput').style.borderColor = '', 1000);
+      return;
+    }
+
+    if (currentType === 'ut' && belop > state.saldo) {
+      showCelebration('😬', 'Ikke nok penger!', `Du har bare kr ${state.saldo} igjen`);
+      closeModal('transModal');
+      return;
+    }
+
+    const tilMaal = currentType === 'inn' && state.maal && sparTilMaal;
+
+    const dato = new Date().toLocaleDateString('nb-NO', { day: 'numeric', month: 'long' });
+    state.transaksjoner.push({ type: currentType, belop, beskrivelse, dato, tilMaal });
+
+    if (currentType === 'inn') {
+      state.saldo += belop;
+      if (tilMaal) {
+        const gammelt = state.maalSpart;
+        state.maalSpart += belop;
+        if (state.maal && state.maalSpart >= state.maal.belop && gammelt < state.maal.belop) {
+          setTimeout(() => showCelebration('🏆', `Du har nådd målet!`, `${state.maal.navn} — FERDIG! 🎉`), 500);
+        }
+      }
+    } else {
+      state.saldo -= belop;
+    }
+
+    saveState();
+    render();
+    closeModal('transModal');
+
+    if (currentType === 'inn') {
+      showCelebration('🤑', `+${belop} kr!`, beskrivelse);
+    }
+  }
+
+  function openMaalModal() {
+    document.getElementById('maalNavnInput').value = state.maal?.navn || '';
+    document.getElementById('maalBelopInput').value = state.maal?.belop || '';
+    document.getElementById('slettMaalBtn').textContent = state.maal ? 'Slett sparemål' : 'Avbryt';
+    document.getElementById('maalModal').classList.add('active');
+    setTimeout(() => document.getElementById('maalNavnInput').focus(), 300);
+  }
+
+  function saveMaal() {
+    const navn = document.getElementById('maalNavnInput').value.trim();
+    const belop = parseInt(document.getElementById('maalBelopInput').value);
+    if (!navn || !belop || belop <= 0) return;
+
+    if (!state.maal) state.maalSpart = 0;
+    state.maal = { navn, belop };
+    saveState();
+    render();
+    closeModal('maalModal');
+    showCelebration('🎯', 'Sparemål satt!', `Nå sparer vi til ${navn}!`);
+  }
+
+  function closeModal(id) {
+    if (id === 'maalModal' && !state.maal) {
+      // just close
+    }
+    if (id === 'maalModal' && document.getElementById('slettMaalBtn').textContent === 'Slett sparemål') {
+      // clicking cancel when maal exists = just close
+    }
+    document.getElementById(id).classList.remove('active');
+  }
+
+  // Handle "Slett sparemål" button
+  document.getElementById('slettMaalBtn').addEventListener('click', function() {
+    if (state.maal) {
+      state.maal = null;
+      state.maalSpart = 0;
+      saveState();
+      render();
+    }
+    document.getElementById('maalModal').classList.remove('active');
+  });
+
+  function closeIfOutside(event, id) {
+    if (event.target.id === id) closeModal(id);
+  }
+
+  // FEIRING
+  function showCelebration(emoji, text, sub) {
+    document.getElementById('celebEmoji').textContent = emoji;
+    document.getElementById('celebText').textContent = text;
+    document.getElementById('celebSub').textContent = sub;
+    document.getElementById('celebration').classList.add('active');
+    spawnConfetti();
+    setTimeout(closeCelebration, 3000);
+  }
+
+  function closeCelebration() {
+    document.getElementById('celebration').classList.remove('active');
+    document.querySelectorAll('.confetti-piece').forEach(el => el.remove());
+  }
+
+  function spawnConfetti() {
+    const colors = ['#FF6B9D','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF9A3C'];
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left: ${Math.random()*100}vw;
+        top: -20px;
+        background: ${colors[Math.floor(Math.random()*colors.length)]};
+        width: ${6+Math.random()*8}px;
+        height: ${6+Math.random()*8}px;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+        animation-duration: ${1.5+Math.random()*2}s;
+        animation-delay: ${Math.random()*0.5}s;
+      `;
+      document.body.appendChild(el);
+    }
+  }
+
+  // ENTER key support
+  document.getElementById('belopInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('beskrivelseInput').focus(); });
+  document.getElementById('beskrivelseInput').addEventListener('keydown', e => { if (e.key === 'Enter') submitTrans(); });
+  document.getElementById('maalNavnInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('maalBelopInput').focus(); });
+  document.getElementById('maalBelopInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveMaal(); });
+
+  loadState();
+</script>
+</body>
+</html>
